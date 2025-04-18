@@ -1,12 +1,71 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Recipe App</title>
+    <meta charset="UTF-8">
+    <title>Microrecipes</title>
+    <style>
+        body {
+            background: #fdf6e3;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container {
+            text-align: center;
+            background: #fff8dc;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #4b2e83;
+            margin-bottom: 10px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 25px;
+        }
+
+        input[type="text"] {
+            padding: 10px 15px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        button {
+            padding: 10px 15px;
+            background-color: #4b2e83;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #361b61;
+        }
+    </style>
 </head>
 <body>
-    <h1>Welcome to the Recipe App!</h1>
-    <p>Discover and share your favorite recipes.</p>
+    <div class="container">
+        <h1>Welcome to the Microrecipes App!</h1>
+        <p>Search for delicious recipes by name or ID.</p>
 
-    <a href="/recipes">View Recipes</a>
+        <form action="/search" method="get">
+            <input type="text" name="query" placeholder="Enter recipe name or ID" required>
+            <button type="submit">Search</button>
+        </form>
+    </div>
 </body>
 </html>

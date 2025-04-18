@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Search Results</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: #f2f2f2;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 2rem;
+        }
+
+        h1 {
+            color: #333;
+        }
+
+        .results {
+            width: 80%;
+            max-width: 800px;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            padding: 2rem;
+            margin-top: 1.5rem;
+        }
+
+        .recipe {
+            border-bottom: 1px solid #ccc;
+            padding: 1rem 0;
+        }
+
+        .recipe:last-child {
+            border-bottom: none;
+        }
+
+        .no-results {
+            color: #999;
+            font-style: italic;
+            margin-top: 2rem;
+        }
+
+        a {
+            display: inline-block;
+            margin-top: 1rem;
+            text-decoration: none;
+            color: #007bff;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+    </style>
+</head>
+<body>
+    <h1>Search Results</h1>
+
+    <div class="results">
+        {% if results and results|length > 0 %}
+            {% for recipe in results %}
+                <div class="recipe">
+                    <strong>{{ recipe.name }}</strong> (ID: {{ recipe.recipeid }})<br>
+                    <em>{{ recipe.description }}</em><br>
+                    Cooking Time: {{ recipe.cookingtime }} mins<br>
+                    User ID: {{ recipe.userid }}<br>
+                    <strong>Instructions:</strong> {{ recipe.instructions }}
+                </div>
+            {% endfor %}
+        {% else %}
+            <div class="no-results">No recipes found for your search.</div>
+        {% endif %}
+    </div>
+
+    <a href="/">Back to Home</a>
+</body>
+</html>
