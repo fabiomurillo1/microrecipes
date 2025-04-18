@@ -1,5 +1,5 @@
-from flask import Flask
-from models import db, Recipes
+from flask import Flask, render_template
+from models import db, Recipes, Users
 
 app = Flask(__name__)
 
@@ -9,7 +9,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 @app.route("/")
 def index():
-    return "PostgreSQL is connected!"
+    return render_template("index.html")
 
 @app.route("/recipes")
 def get_recipes():
@@ -17,7 +17,17 @@ def get_recipes():
     output = []
     for recipe in recipes:
         output.append(
-            f"ID: {recipe.recipeid} | Name: {recipe.name} | Description: {recipe.description} | Time: {recipe.cookingtime} mins | User ID: {recipe.userid}"
+            f"ID: {recipe.recipeid} | Name: {recipe.name} | Description: {recipe.description} | Time: {recipe.cookingtime} mins | User ID: {recipe.userid} | Instructions : {recipe.instructions} "
+        )
+    return "<br>".join(output)
+
+@app.route("/users")
+def get_users():
+    users = Users.query.all()
+    output = []
+    for user in users:
+        output.append(
+            f"ID: {user.userid} | Username: {user.username} | Email: {user.email} | Name: {user.firstname} {user.lastname} | Creation Date: {user.created_at}"
         )
     return "<br>".join(output)
 
