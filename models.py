@@ -1,4 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 db = SQLAlchemy()
 
@@ -13,10 +14,11 @@ class Recipes(db.Model):
 
 class Users(db.Model):
     __tablename__ = "users"
-    userid = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True, nullable=False)
-    email = db.Column(db.String(150), unique=True, nullable=False)
-    firstname = db.Column(db.String(100), nullable=False)
-    lastname = db.Column(db.String(100), nullable=False)
-    created_at = db.Column(db.DateTime, nullable=False)
+    userid = db.Column('userid', db.Integer, primary_key=True)
+    username = db.Column('username',db.String(100), unique=True, nullable=False)
+    email = db.Column('email',db.String(150), unique=True, nullable=False)
+    firstName = db.Column('firstname',db.String(100), nullable=False)
+    lastName = db.Column('lastname', db.String(100), nullable=False)
+    created_at = db.Column('created_at', db.DateTime, default=datetime.utcnow)
+    password = db.Column('password',db.Text, nullable=False)
 
