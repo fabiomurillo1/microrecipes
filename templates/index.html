@@ -147,7 +147,6 @@
 
   <h1>Welcome to MicroRecipes!</h1>
 
-  <!-- FLASH MESSAGES -->
   {% with messages = get_flashed_messages() %}
     {% if messages %}
       <ul class="flash-messages">
@@ -163,10 +162,8 @@
     <button type="submit">Search</button>
   </form>
 
-  <!-- View Recipes Button -->
   <a href="/recipes" class="view-recipes-btn">View All Recipes</a>
 
-  <!-- Register Modal -->
   <div id="registerModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('registerModal')">&times;</span>
@@ -183,7 +180,6 @@
     </div>
   </div>
 
-  <!-- Login Modal -->
   <div id="loginModal" class="modal">
     <div class="modal-content">
       <span class="close" onclick="closeModal('loginModal')">&times;</span>

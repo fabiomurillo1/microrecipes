@@ -65,11 +65,14 @@
 
     .action-btn {
       margin-top: 0.5rem;
+      margin-right: 0.3rem;
       padding: 0.5rem 1rem;
       color: white;
       border: none;
       border-radius: 5px;
       cursor: pointer;
+      display: inline-block;
+      text-decoration: none;
     }
 
     .favorite-btn { background-color: #007bff; }
@@ -77,6 +80,9 @@
 
     .delete-btn { background-color: #dc3545; }
     .delete-btn:hover { background-color: #c82333; }
+
+    .edit-btn { background-color: #ffc107; color: black; }
+    .edit-btn:hover { background-color: #e0a800; }
 
     .messages ul {
       list-style: none;
@@ -98,7 +104,6 @@
 
   <h1>Welcome to Your Dashboard</h1>
 
-  <!-- Flash messages -->
   <div class="messages">
     {% with messages = get_flashed_messages() %}
       {% if messages %}
@@ -133,9 +138,11 @@
           {% endif %}
         </form>
 
-        <form method="POST" action="{{ url_for('delete_recipe', recipeid=recipe.recipeid) }}">
+        <form method="POST" action="{{ url_for('delete_recipe', recipeid=recipe.recipeid) }}" style="display:inline;">
           <button type="submit" class="action-btn delete-btn">Delete</button>
         </form>
+
+        <a href="{{ url_for('edit_recipe', recipeid=recipe.recipeid) }}" class="action-btn edit-btn">Edit</a>
       </div>
     {% endfor %}
   </div>

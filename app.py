@@ -36,14 +36,12 @@ def get_recipes():
         flash("Please log in to view recipes.")
         return redirect(url_for("login"))
 
-    # Start building the query with joins
     recipes = (
         db.session.query(Recipes)
         .join(recipe_preferences)
         .join(Preferences)
     )
 
-    # Filter by search query (matches recipe name or preference name)
     if query:
         recipes = recipes.filter(
             or_(
@@ -52,24 +50,19 @@ def get_recipes():
             )
         )
 
-    # Optional dropdown filter by specific preference
     if preference_filter:
         recipes = recipes.filter(Preferences.preferencename == preference_filter)
 
-    # Sorting
     if sort == "asc":
         recipes = recipes.order_by(Recipes.name.asc())
     elif sort == "desc":
         recipes = recipes.order_by(Recipes.name.desc())
 
-    # Finalize query
     recipes = recipes.all()
 
-    # Get favorite recipe IDs
     favorite_ids = db.session.query(Favorites.recipe_id).filter_by(user_id=user_id).all()
     favorite_ids = [f[0] for f in favorite_ids]
 
-    # Send all preferences for dropdown
     all_preferences = Preferences.query.order_by(Preferences.preferencename).all()
 
     return render_template("recipes.html", recipes=recipes, favorite_ids=favorite_ids, all_preferences=all_preferences)
@@ -81,10 +74,8 @@ def view_all_recipes():
         flash("Please log in to view all recipes.")
         return redirect(url_for("login"))
 
-    # Get all recipes
     recipes = Recipes.query.all()
 
-    # Get the IDs of the favorite recipes for the current user
     favorite_recipes = Favorites.query.filter_by(user_id=session["user_id"]).all()
     favorite_ids = [fav.recipe_id for fav in favorite_recipes]
 
@@ -149,19 +140,17 @@ def login():
     username_or_email = request.form["username"]
     password = request.form["password"]
 
-    # Look for user based on username or email
     user = Users.query.filter(
         (Users.username == username_or_email) | (Users.email == username_or_email)
     ).first()
 
-    # Check if user exists and if password matches
-    if user and user.password == password:  # No hash check as requested
+    if user and user.password == password:
         session["user_id"] = user.userid
         flash("Login successful!", "success")
-        return redirect(url_for("dashboard"))  # Redirect to dashboard after successful login
+        return redirect(url_for("dashboard"))
     else:
         flash("Invalid credentials", "error")
-        return redirect(url_for("index"))  # Redirect back to the index page if login fails
+        return redirect(url_for("index"))
 
 
 @app.route("/dashboard")
@@ -172,10 +161,8 @@ def dashboard():
 
     user_id = session["user_id"]
 
-    # Show only the user's created recipes (optional section)
     own_recipes = Recipes.query.filter_by(userid=user_id).all()
 
-    # Show favorite recipes regardless of who created them
     favorite_recipes = (
         db.session.query(Recipes)
         .join(Favorites, Recipes.recipeid == Favorites.recipe_id)
@@ -202,14 +189,12 @@ def new_recipe():
 
     if request.method == "POST":
         try:
-            # Collect form inputs
             name = request.form["name"].strip()
             description = request.form["description"].strip()
             cookingtime = int(request.form["cookingtime"])
             instructions = request.form["instructions"].strip()
-            selected_preference_ids = request.form.getlist("preferences")  # list of strings
+            selected_preference_ids = request.form.getlist("preferences")
 
-            # Create new recipe object
             new_recipe = Recipes(
                 name=name,
                 description=description,
@@ -218,13 +203,11 @@ def new_recipe():
                 userid=session["user_id"]
             )
 
-            # Link dietary preferences (many-to-many)
             for pid in selected_preference_ids:
                 preference = Preferences.query.get(int(pid))
                 if preference:
                     new_recipe.preferences.append(preference)
 
-            # Save to DB
             db.session.add(new_recipe)
             db.session.commit()
             flash("Recipe created successfully!")
@@ -235,7 +218,6 @@ def new_recipe():
 
         return redirect(url_for("dashboard"))
 
-    # GET request → load preference options for the form
     all_preferences = Preferences.query.order_by(Preferences.preferencename).all()
     return render_template("new_recipe.html", all_preferences=all_preferences)
 
@@ -259,15 +241,12 @@ def toggle_favorite(id):
 
     user_id = session['user_id']
 
-    # Check if this recipe is already favorited by the user
     favorite = Favorites.query.filter_by(user_id=user_id, recipe_id=id).first()
 
     if favorite:
-        # Already favorited — remove it
         db.session.delete(favorite)
         flash("Removed from favorites.")
     else:
-        # Not favorited yet — add it
         new_fav = Favorites(user_id=user_id, recipe_id=id)
         db.session.add(new_fav)
         flash("Added to favorites!")
@@ -294,13 +273,51 @@ def top_preferences():
     results = db.session.execute(query).fetchall()
     return render_template("top_preferences.html", results=results)
 
+@app.route("/edit_recipe/<int:recipeid>", methods=["GET", "POST"])
+def edit_recipe(recipeid):
+    if "user_id" not in session:
+        flash("Please log in to edit recipes.")
+        return redirect(url_for("login"))
+
+    recipe = Recipes.query.get_or_404(recipeid)
+
+    if recipe.userid != session["user_id"]:
+        flash("You are not authorized to edit this recipe.")
+        return redirect(url_for("dashboard"))
+
+    if request.method == "POST":
+        try:
+            recipe.name = request.form["name"].strip()
+            recipe.description = request.form["description"].strip()
+            recipe.cookingtime = int(request.form["cookingtime"])
+            recipe.instructions = request.form["instructions"].strip()
+
+            selected_ids = request.form.getlist("preferences")
+            recipe.preferences = []
+            for pid in selected_ids:
+                pref = Preferences.query.get(int(pid))
+                if pref:
+                    recipe.preferences.append(pref)
+
+            db.session.commit()
+            flash("Recipe updated successfully!")
+            return redirect(url_for("dashboard"))
+        except Exception as e:
+            db.session.rollback()
+            flash(f"Error updating recipe: {e}")
+
+    all_preferences = Preferences.query.order_by(Preferences.preferencename).all()
+    selected_preferences = [p.preferenceid for p in recipe.preferences]
+
+    return render_template("edit_recipe.html", recipe=recipe, all_preferences=all_preferences, selected_preferences=selected_preferences)
+
 @login_manager.user_loader
 def load_user(user_id):
     return Users.query.get(int(user_id))
 @app.route("/logout")
 def logout():
-    session.clear()  # This will remove all data from the session
-    return redirect(url_for("login"))  # Redirect the user back to login page
+    session.clear()
+    return redirect(url_for("login"))
 
 if __name__ == "__main__":
     app.run(debug=True)

@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Edit Recipe</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f9f9f9;
+      padding: 2rem;
+    }
+
+    h1 {
+      text-align: center;
+    }
+
+    form {
+      max-width: 500px;
+      margin: auto;
+      background: white;
+      padding: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    input, textarea, select {
+      width: 100%;
+      padding: 0.5rem;
+      margin: 0.5rem 0 1rem;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+
+    select[multiple] {
+      height: auto;
+    }
+
+    button {
+      background-color: #ffc107;
+      color: black;
+      padding: 0.5rem 1rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #e0a800;
+    }
+
+    a {
+      display: block;
+      margin-top: 1rem;
+      text-align: center;
+      color: #007bff;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Edit Your Recipe</h1>
+
+  <form method="POST" action="{{ url_for('edit_recipe', recipeid=recipe.recipeid) }}">
+    <input type="text" name="name" placeholder="Recipe Name" value="{{ recipe.name }}" required>
+
+    <textarea name="description" placeholder="Short Description" required>{{ recipe.description }}</textarea>
+
+    <input type="number" name="cookingtime" placeholder="Cooking Time (minutes)" value="{{ recipe.cookingtime }}" required>
+
+    <textarea name="instructions" placeholder="Instructions" required>{{ recipe.instructions }}</textarea>
+
+    <label for="preferences"><strong>Dietary Preferences:</strong></label>
+    <select name="preferences" multiple size="5">
+      {% for pref in all_preferences %}
+        <option value="{{ pref.preferenceid }}"
+          {% if pref.preferenceid in selected_preferences %}selected{% endif %}>
+          {{ pref.preferencename }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <button type="submit">Update Recipe</button>
+  </form>
+
+  <a href="/dashboard">← Back to Dashboard</a>
+
+</body>
+</html>

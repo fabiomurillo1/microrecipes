@@ -107,7 +107,6 @@
 
   <h1>All Recipes</h1>
 
-  <!-- Search and Filter Form -->
   <form class="search-sort" method="GET" action="/recipes">
     <input type="text" name="query" placeholder="Search by name or preference"
            value="{{ request.args.get('query', '') }}">
@@ -130,7 +129,6 @@
     <button type="submit">Apply</button>
   </form>
 
-  <!-- Recipe List -->
   <div class="recipe-list">
     {% for recipe in recipes %}
       <div class="recipe-card">
