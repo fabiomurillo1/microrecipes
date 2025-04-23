@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Dashboard</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background-color: #f0f2f5;
+      padding: 2rem;
+      margin: 0;
+    }
+
+    h1, h2 {
+      text-align: center;
+      color: #333;
+    }
+
+    .home-btn, .create-btn, .analytics-btn {
+      display: block;
+      margin: 0 auto 1rem auto;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 8px;
+      text-decoration: none;
+      font-size: 1rem;
+      text-align: center;
+      transition: background-color 0.2s ease;
+      width: fit-content;
+      color: white;
+    }
+
+    .home-btn { background-color: #6c757d; }
+    .home-btn:hover { background-color: #5a6268; }
+
+    .create-btn { background-color: #28a745; }
+    .create-btn:hover { background-color: #218838; }
+
+    .analytics-btn { background-color: #17a2b8; }
+    .analytics-btn:hover { background-color: #138496; }
+
+    .recipe-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-top: 1rem;
+    }
+
+    .recipe-card {
+      background-color: white;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      position: relative;
+    }
+
+    .recipe-card h3 {
+      margin-top: 0;
+      color: #007bff;
+    }
+
+    .recipe-card p {
+      margin: 0.5rem 0;
+    }
+
+    .action-btn {
+      margin-top: 0.5rem;
+      padding: 0.5rem 1rem;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .favorite-btn { background-color: #007bff; }
+    .favorite-btn:hover { background-color: #0056b3; }
+
+    .delete-btn { background-color: #dc3545; }
+    .delete-btn:hover { background-color: #c82333; }
+
+    .messages ul {
+      list-style: none;
+      padding: 0;
+      margin-bottom: 2rem;
+      text-align: center;
+      color: #155724;
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      border-radius: 5px;
+    }
+
+    .messages li {
+      padding: 0.75rem;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Welcome to Your Dashboard</h1>
+
+  <!-- Flash messages -->
+  <div class="messages">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <ul>
+          {% for message in messages %}
+            <li>{{ message }}</li>
+          {% endfor %}
+        </ul>
+      {% endif %}
+    {% endwith %}
+  </div>
+
+  <a href="/" class="home-btn">← Back to Home</a>
+  <a href="/new_recipe" class="create-btn">+ Create New Recipe</a>
+  <a href="/top_preferences" class="analytics-btn">📊 View Top Preferences</a>
+
+  <h2>My Recipes</h2>
+  <div class="recipe-list">
+    {% for recipe in recipes %}
+      <div class="recipe-card">
+        <h3>{{ recipe.name }}</h3>
+        <p><strong>ID:</strong> {{ recipe.recipeid }}</p>
+        <p><strong>Description:</strong> {{ recipe.description }}</p>
+        <p><strong>Cooking Time:</strong> {{ recipe.cookingtime }} mins</p>
+        <p><strong>Instructions:</strong> {{ recipe.instructions }}</p>
+
+        <form method="POST" action="{{ url_for('toggle_favorite', id=recipe.recipeid) }}">
+          {% if recipe.recipeid in favorite_ids %}
+            <button type="submit" class="action-btn favorite-btn">❤️ Unfavorite</button>
+          {% else %}
+            <button type="submit" class="action-btn favorite-btn">♡ Add to Favorites</button>
+          {% endif %}
+        </form>
+
+        <form method="POST" action="{{ url_for('delete_recipe', recipeid=recipe.recipeid) }}">
+          <button type="submit" class="action-btn delete-btn">Delete</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+
+  <h2>My Favorite Recipes</h2>
+  <div class="recipe-list">
+    {% for recipe in favorite_recipes %}
+      <div class="recipe-card">
+        <h3>{{ recipe.name }} ❤️</h3>
+        <p><strong>ID:</strong> {{ recipe.recipeid }}</p>
+        <p><strong>Description:</strong> {{ recipe.description }}</p>
+        <p><strong>Cooking Time:</strong> {{ recipe.cookingtime }} mins</p>
+        <p><strong>Instructions:</strong> {{ recipe.instructions }}</p>
+
+        <form method="POST" action="{{ url_for('toggle_favorite', id=recipe.recipeid) }}">
+          <button type="submit" class="action-btn favorite-btn">❤️ Unfavorite</button>
+        </form>
+      </div>
+    {% endfor %}
+  </div>
+
+</body>
+</html>

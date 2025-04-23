@@ -56,6 +56,8 @@
       margin-top: 2rem;
       display: flex;
       gap: 1rem;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
     input[type="text"] {
@@ -76,6 +78,21 @@
 
     button[type="submit"]:hover {
       background-color: #218838;
+    }
+
+    .view-recipes-btn {
+      margin-top: 1rem;
+      background-color: #17a2b8;
+      color: white;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 5px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .view-recipes-btn:hover {
+      background-color: #117a8b;
     }
 
     .modal {
@@ -145,6 +162,9 @@
     <input type="text" name="query" placeholder="Enter recipe name or ID...">
     <button type="submit">Search</button>
   </form>
+
+  <!-- View Recipes Button -->
+  <a href="/recipes" class="view-recipes-btn">View All Recipes</a>
 
   <!-- Register Modal -->
   <div id="registerModal" class="modal">
