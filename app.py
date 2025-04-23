@@ -2,7 +2,7 @@ from flask import Flask, render_template, request, redirect, flash, url_for, ses
 from flask_login import current_user,login_required, LoginManager, logout_user, login_user
 from models import db, Recipes, Users, Favorites, Preferences, recipe_preferences
 from werkzeug.security import generate_password_hash, check_password_hash
-from sqlalchemy import String, text
+from sqlalchemy import String, text, or_
 import sys
 import os
 
